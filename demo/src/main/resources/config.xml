@@ -1,15 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd">
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+	    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+<aop:config>
+    <!-- Aspect -->
+    <aop:aspect id="loggerAspect" ref="logger">
+
+        <!-- Pointcut -->
+        <aop:pointcut id="ClientAllMethods" expression="execution(* com.example.demo.Client.*(..))"/>
+
+        <!-- Advice(s) -->
+        <aop:before pointcut-ref="ClientAllMethods" method="before"/>
+        <aop:after  pointcut-ref="ClientAllMethods" method="after"/>
+        <aop:after-returning pointcut-ref="ClientAllMethods" returning="retVal" method="afterReturning"/>
+    </aop:aspect>
+</aop:config>
 
     <bean id="service" class="com.example.demo.Service">
-        <constructor-arg value="Hello My name is Inigo Montoya"/>
+        <constructor-arg value="Hello World"/>
     </bean>
+<bean id="reminder" class="com.example.demo.Reminder" scope="prototype">
+</bean>
 
-    <bean id="client" class="com.example.demo.Client">
-        <constructor-arg ref="service"/>
-    </bean>
+
+
+<!--<bean id="client" class="com.example.demo.Client">
+    <constructor-arg ref="service"/>
+
+    <property name="service">
+        <ref bean="service"/>
+    </property>
+
+    <property name="someList">
+        <list>
+            <value>a list element followed by a reference</value>
+            <value>a list element </value>
+            <ref bean="client" />
+        </list>
+    </property>
+</bean>-->
+
+<bean id="client2" class="com.example.demo.Client">
+    <constructor-arg value="Client 2"/>
+    <constructor-arg ref="reminder" />
+</bean>
+
+<bean id="client1" class="com.example.demo.Client">
+    <constructor-arg value="Client 1"/>
+    <constructor-arg ref="reminder" />
+</bean>
+
+<bean id="logger" class="com.example.demo.Logger"></bean>
 
 </beans>
